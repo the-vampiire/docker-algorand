@@ -1,0 +1,5 @@
+{
+  "EndpointAddress": "0.0.0.0:4001",
+  "BaseLoggerDebugLevel": 1,
+  "LogSizeLimit": 25000000
+}

@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  node:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - ALGORAND_NETWORK=${ALGORAND_NETWORK}
+        - ALGORAND_DATA=${ALGORAND_DATA}

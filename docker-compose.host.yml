@@ -1,0 +1,29 @@
+version: '3.7'
+
+volumes:
+  node-data:
+
+services:
+  # add other services here
+  # node accessible via http://node:4001 (AlgoD API) and http://node:4002 (KMD API)
+  node:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - ALGORAND_NETWORK=${ALGORAND_NETWORK}
+        - ALGORAND_DATA=${ALGORAND_DATA}
+    # run as non-root user
+    user: algorand:algorand
+    restart: on-failure
+    ports:
+      - "4001:4001"
+      - "4002:4002"
+    environment:
+      # injected from compose .env
+      ALGORAND_DATA: ${ALGORAND_DATA}
+      ALGORAND_NETWORK: ${ALGORAND_NETWORK}
+
+    volumes:
+      # persist in docker volume
+      - node-data:/${ALGORAND_DATA}

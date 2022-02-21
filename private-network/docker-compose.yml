@@ -1,0 +1,69 @@
+version: '3.7'
+
+networks:
+  node-private-network:
+
+volumes:
+  node-data:
+  access-tokens:
+
+services:
+  # add additional services here
+  # add each service to the node-private-network for internal-only access
+  # node accessible via http://node:4001 (AlgoD API) and http://node:4002 (KMD API)
+  service-name:
+    environment:
+      # injected from compose .env
+      ALGORAND_NETWORK: ${ALGORAND_NETWORK}
+      ALGORAND_TOKENS_DIR: ${ALGORAND_TOKENS_DIR}
+    build:
+      context: ./service-name
+      dockerfile: ./Dockerfile
+      args:
+        - ALGORAND_TOKENS_DIR=${ALGORAND_TOKENS_DIR}
+    restart: on-failure
+    depends_on:
+      # ensure node starts first so access tokens dir is populated
+      - node
+    # ports:
+      # optionally expose ports of this service to host
+      # - 
+    networks:
+      - node-private-network
+    expose:
+      # only exposes to other services through node-private-network
+      # see algorand/config/kmd_config.json for restricting access only by service-name:8008
+      # not necessary to expose but put here for example coordination with kmd_config.json
+      - 8008
+    volumes:
+      # shared volume to read access tokens for loading into service env
+      - access-tokens:${ALGORAND_TOKENS_DIR}:ro
+  node:
+    environment:
+      # injected from compose .env
+      ALGORAND_DATA: ${ALGORAND_DATA}
+      ALGORAND_NETWORK: ${ALGORAND_NETWORK}
+      ALGORAND_TOKENS_DIR: ${ALGORAND_TOKENS_DIR}
+    build:
+      context: ./algorand
+      dockerfile: ./Dockerfile
+      args:
+        - ALGORAND_DATA=${ALGORAND_DATA}
+        - ALGORAND_NETWORK=${ALGORAND_NETWORK}
+        - ALGORAND_TOKENS_DIR=${ALGORAND_TOKENS_DIR}
+    # run as non-root user
+    user: algorand:algorand
+    restart: on-failure
+    # ports:
+      # no ports exposed to host
+    networks:
+      - node-private-network
+    expose:
+      # only exposes to other services through node-private-network
+      - 4001 # AlgoD API
+      - 4002 # KMD API
+    volumes:
+      # persist in docker volume
+      - node-data:${ALGORAND_DATA}
+      # shared volume to read access tokens for loading into service env
+      - access-tokens:${ALGORAND_TOKENS_DIR}

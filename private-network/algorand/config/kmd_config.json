@@ -1,0 +1,7 @@
+{
+  "address": "0.0.0.0:4002",
+  "allowed_origins": [
+    "http://service-name:8008"
+  ],
+  "session_lifetime_secs": 30
+}

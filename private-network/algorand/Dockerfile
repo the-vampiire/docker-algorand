@@ -2,9 +2,11 @@ FROM ubuntu:20.04
 
 ARG ALGORAND_DATA
 ARG ALGORAND_NETWORK
+ARG ALGORAND_TOKENS_DIR
 
 ENV ALGORAND_DATA=${ALGORAND_DATA}
 ENV ALGORAND_NETWORK=${ALGORAND_NETWORK}
+ENV ALGORAND_TOKENS_DIR=${ALGORAND_TOKENS_DIR}
 
 RUN apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \
@@ -15,8 +17,8 @@ RUN apt-get update \
 RUN groupadd algorand \
     && useradd -g algorand -s /usr/bin/bash -m algorand
 
-RUN mkdir -p ${ALGORAND_DATA} \
-    && chown algorand:algorand ${ALGORAND_DATA}
+RUN mkdir -p ${ALGORAND_DATA} ${ALGORAND_TOKENS_DIR} \
+    && chown algorand:algorand ${ALGORAND_DATA} ${ALGORAND_TOKENS_DIR}
 
 USER algorand:algorand
 
@@ -37,7 +39,9 @@ WORKDIR ${ALGORAND_DATA}
 
 EXPOSE 4001
 EXPOSE 4002
+
 VOLUME [ "${ALGORAND_DATA}" ]
+VOLUME [ "${ALGORAND_TOKENS_DIR}" ]
 
 ENTRYPOINT [ "/usr/bin/bash", "/home/algorand/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/bash", "/home/algorand/scripts/start.sh"]

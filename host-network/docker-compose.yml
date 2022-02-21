@@ -4,8 +4,6 @@ volumes:
   node-data:
 
 services:
-  # add other services here
-  # node accessible via http://node:4001 (AlgoD API) and http://node:4002 (KMD API)
   node:
     build:
       context: .
@@ -17,6 +15,7 @@ services:
     user: algorand:algorand
     restart: on-failure
     ports:
+    # exposed to host network
       - "4001:4001"
       - "4002:4002"
     environment:
@@ -26,4 +25,4 @@ services:
 
     volumes:
       # persist in docker volume
-      - node-data:/${ALGORAND_DATA}
+      - node-data:${ALGORAND_DATA}

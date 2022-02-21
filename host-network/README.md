@@ -26,9 +26,6 @@
   - `mainnet.env`
   - `testnet.env`
 
-> `docker-compose.host.yml` (expose-style: `host`)
-
-
 ```sh
 docker-compose --env-file <network>.env up -d
 ```

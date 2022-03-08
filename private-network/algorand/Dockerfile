@@ -43,5 +43,6 @@ EXPOSE 4002
 VOLUME [ "${ALGORAND_DATA}" ]
 VOLUME [ "${ALGORAND_TOKENS_DIR}" ]
 
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ "/usr/bin/curl", "--silent --fail localhost:4001/health" ]
 ENTRYPOINT [ "/usr/bin/bash", "/home/algorand/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/bash", "/home/algorand/scripts/start.sh"]
